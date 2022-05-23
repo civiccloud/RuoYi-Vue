@@ -3,6 +3,7 @@
 
 .gradle
 /build/
+/ruoyi-vue3/
 !gradle/wrapper/gradle-wrapper.jar
 
 target/
