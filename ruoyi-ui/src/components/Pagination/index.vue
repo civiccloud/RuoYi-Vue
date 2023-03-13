@@ -1,114 +1,105 @@
 <template>
-  <div :class="{'hidden':hidden}" class="pagination-container">
-    <el-pagination
-      :background="background"
-      :current-page.sync="currentPage"
-      :page-size.sync="pageSize"
-      :layout="layout"
-      :page-sizes="pageSizes"
-      :pager-count="pagerCount"
-      :total="total"
-      v-bind="$attrs"
-      @size-change="handleSizeChange"
-      @current-change="handleCurrentChange"
-    />
-  </div>
+    <div :class="{ hidden: hidden }" class="pagination-container">
+        <el-pagination
+            v-model:current-page="currentPage"
+            v-model:page-size="pageSize"
+            :background="background"
+            :layout="layout"
+            :page-sizes="pageSizes"
+            :pager-count="pagerCount"
+            :total="total"
+            @sizeChange="handleSizeChange"
+            @currentChange="handleCurrentChange"
+        />
+    </div>
 </template>
 
-<script>
-import { scrollTo } from '@/utils/scroll-to'
+<script setup lang="ts">
+import { scrollTo } from '@/utils/scroll-to';
+import { computed } from 'vue';
 
-export default {
-  name: 'Pagination',
-  props: {
+const props = defineProps({
     total: {
-      required: true,
-      type: Number
+        required: true,
+        type: Number,
     },
     page: {
-      type: Number,
-      default: 1
+        type: Number,
+        default: 1,
     },
     limit: {
-      type: Number,
-      default: 20
+        type: Number,
+        default: 20,
     },
     pageSizes: {
-      type: Array,
-      default() {
-        return [10, 20, 30, 50]
-      }
+        type: Array,
+        default() {
+            return [10, 20, 30, 50];
+        },
     },
     // 移动端页码按钮的数量端默认值5
     pagerCount: {
-      type: Number,
-      default: document.body.clientWidth < 992 ? 5 : 7
+        type: Number,
+        default: document.body.clientWidth < 992 ? 5 : 7,
     },
     layout: {
-      type: String,
-      default: 'total, sizes, prev, pager, next, jumper'
+        type: String,
+        default: 'total, sizes, prev, pager, next, jumper',
     },
     background: {
-      type: Boolean,
-      default: true
+        type: Boolean,
+        default: true,
     },
     autoScroll: {
-      type: Boolean,
-      default: true
+        type: Boolean,
+        default: true,
     },
     hidden: {
-      type: Boolean,
-      default: false
-    }
-  },
-  data() {
-    return {
-    };
-  },
-  computed: {
-    currentPage: {
-      get() {
-        return this.page
-      },
-      set(val) {
-        this.$emit('update:page', val)
-      }
+        type: Boolean,
+        default: false,
     },
-    pageSize: {
-      get() {
-        return this.limit
-      },
-      set(val) {
-        this.$emit('update:limit', val)
-      }
-    }
-  },
-  methods: {
-    handleSizeChange(val) {
-      if (this.currentPage * val > this.total) {
-        this.currentPage = 1
-      }
-      this.$emit('pagination', { page: this.currentPage, limit: val })
-      if (this.autoScroll) {
-        scrollTo(0, 800)
-      }
+});
+
+const emit = defineEmits(['update:page', 'update:limit', 'pagination']);
+const currentPage = computed({
+    get() {
+        return props.page;
     },
-    handleCurrentChange(val) {
-      this.$emit('pagination', { page: val, limit: this.pageSize })
-      if (this.autoScroll) {
-        scrollTo(0, 800)
-      }
+    set(val) {
+        emit('update:page', val);
+    },
+});
+const pageSize = computed({
+    get() {
+        return props.limit;
+    },
+    set(val) {
+        emit('update:limit', val);
+    },
+});
+function handleSizeChange(val: number) {
+    if (currentPage.value * val > props.total) {
+        currentPage.value = 1;
     }
-  }
+    emit('pagination', { page: currentPage.value, limit: val });
+    if (props.autoScroll) {
+        scrollTo(0, 800);
+    }
+}
+function handleCurrentChange(val: number) {
+    emit('pagination', { page: val, limit: pageSize.value });
+    if (props.autoScroll) {
+        scrollTo(0, 800);
+    }
 }
 </script>
 
 <style scoped>
 .pagination-container {
-  background: #fff;
-  padding: 32px 16px;
+    background: #fff;
+    padding: 32px 16px;
 }
 .pagination-container.hidden {
-  display: none;
+    display: none;
 }
 </style>

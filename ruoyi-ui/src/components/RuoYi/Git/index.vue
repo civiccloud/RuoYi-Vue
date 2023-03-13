@@ -1,21 +1,15 @@
 <template>
-  <div>
-    <svg-icon icon-class="github" @click="goto" />
-  </div>
+    <div>
+        <svg-icon icon-class="github" @click="goto" />
+    </div>
 </template>
 
-<script>
-export default {
-  name: 'RuoYiGit',
-  data() {
-    return {
-      url: 'https://gitee.com/y_project/RuoYi-Vue'
-    }
-  },
-  methods: {
-    goto() {
-      window.open(this.url)
-    }
-  }
+<script setup lang="ts">
+import { ref } from 'vue';
+
+const url = ref('https://gitee.com/y_project/RuoYi-Vue');
+
+function goto() {
+    window.open(url.value);
 }
 </script>

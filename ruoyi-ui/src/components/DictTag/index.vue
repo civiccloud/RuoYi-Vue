@@ -1,52 +1,52 @@
 <template>
-  <div>
-    <template v-for="(item, index) in options">
-      <template v-if="values.includes(item.value)">
-        <span
-          v-if="item.raw.listClass == 'default' || item.raw.listClass == ''"
-          :key="item.value"
-          :index="index"
-          :class="item.raw.cssClass"
-          >{{ item.label }}</span
-        >
-        <el-tag
-          v-else
-          :disable-transitions="true"
-          :key="item.value"
-          :index="index"
-          :type="item.raw.listClass == 'primary' ? '' : item.raw.listClass"
-          :class="item.raw.cssClass"
-        >
-          {{ item.label }}
-        </el-tag>
-      </template>
-    </template>
-  </div>
+    <div>
+        <template v-for="(item, index) in options">
+            <template v-if="values.includes(item.value)">
+                <span
+                    v-if="item.elTagType == 'default' || item.elTagType == ''"
+                    :key="item.value"
+                    :index="index"
+                    :class="item.elTagClass"
+                    >{{ item.label }}</span
+                >
+                <el-tag
+                    v-else
+                    :key="item.value + ''"
+                    :disable-transitions="true"
+                    :index="index"
+                    :type="item.elTagType === 'primary' ? '' : item.elTagType"
+                    :class="item.elTagClass"
+                    >{{ item.label }}</el-tag
+                >
+            </template>
+        </template>
+    </div>
 </template>
 
-<script>
-export default {
-  name: "DictTag",
-  props: {
+<script setup lang="ts">
+import { computed } from 'vue';
+
+const props = defineProps({
+    // 数据
     options: {
-      type: Array,
-      default: null,
+        type: Array as () => Array<any>,
+        default: null,
     },
+    // 当前的值
     value: [Number, String, Array],
-  },
-  computed: {
-    values() {
-      if (this.value !== null && typeof this.value !== 'undefined') {
-        return Array.isArray(this.value) ? this.value : [String(this.value)];
-      } else {
+});
+
+const values = computed(() => {
+    if (props.value !== null && typeof props.value !== 'undefined') {
+        return Array.isArray(props.value) ? props.value : [String(props.value)];
+    } else {
         return [];
-      }
-    },
-  },
-};
+    }
+});
 </script>
+
 <style scoped>
 .el-tag + .el-tag {
-  margin-left: 10px;
+    margin-left: 10px;
 }
 </style>
