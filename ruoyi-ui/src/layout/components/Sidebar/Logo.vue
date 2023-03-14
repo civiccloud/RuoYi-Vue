@@ -100,4 +100,9 @@ const sideTheme = computed(() => settingsStore.sideTheme);
         }
     }
 }
+.openSidebar{
+  & .sidebar-logo {
+    margin-right: 10px;
+  }
+}
 </style>
