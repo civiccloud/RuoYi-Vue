@@ -1,10 +1,8 @@
 <template>
     <div
         class="sidebar-logo-container"
-        :class="{ collapse: collapse }"
         :style="{
-            backgroundColor:
-                sideTheme === 'theme-dark' ? variables.menuBackground : variables.menuLightBackground,
+            backgroundColor: sideTheme === 'theme-dark' ? variables.menuBackground : variables.menuLightBackground,
         }"
     >
         <transition name="sidebarLogoFade">
@@ -88,7 +86,6 @@ const sideTheme = computed(() => settingsStore.sideTheme);
             width: 32px;
             height: 32px;
             vertical-align: middle;
-            margin-right: 12px;
         }
 
         & .sidebar-title {
@@ -100,12 +97,6 @@ const sideTheme = computed(() => settingsStore.sideTheme);
             font-size: 14px;
             font-family: Avenir, Helvetica Neue, Arial, Helvetica, sans-serif;
             vertical-align: middle;
-        }
-    }
-
-    &.collapse {
-        .sidebar-logo {
-            margin-right: 0px;
         }
     }
 }
