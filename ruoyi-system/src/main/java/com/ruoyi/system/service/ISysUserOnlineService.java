@@ -3,6 +3,8 @@ package com.ruoyi.system.service;
 import com.ruoyi.common.core.domain.model.LoginUser;
 import com.ruoyi.system.domain.SysUserOnline;
 
+import java.util.List;
+
 /**
  * 在线用户 服务层
  * 
@@ -10,6 +12,12 @@ import com.ruoyi.system.domain.SysUserOnline;
  */
 public interface ISysUserOnlineService
 {
+    /**
+     * 获取在线列表
+     * @return
+     */
+    List<SysUserOnline> selectOnlineList();
+
     /**
      * 通过登录地址查询信息
      * 

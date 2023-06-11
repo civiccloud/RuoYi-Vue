@@ -13,6 +13,11 @@ public class CacheConstants
     public static final String LOGIN_TOKEN_KEY = "login_tokens:";
 
     /**
+     * 待分配的用户数据
+     */
+    public static final String CLUE_USER_LIST = "clue_user_list";
+
+    /**
      * 验证码 redis key
      */
     public static final String CAPTCHA_CODE_KEY = "captcha_codes:";

@@ -1,9 +1,13 @@
 package com.ruoyi.framework.web.service;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+
+import com.ruoyi.system.domain.SysUserOnline;
+import com.ruoyi.system.service.ISysUserOnlineService;
+import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -50,6 +54,9 @@ public class TokenService
     @Autowired
     private RedisCache redisCache;
 
+    @Resource
+    private ISysUserOnlineService sysUserOnlineService;
+
     /**
      * 获取用户身份信息
      *
@@ -70,9 +77,7 @@ public class TokenService
                 LoginUser user = redisCache.getCacheObject(userKey);
                 return user;
             }
-            catch (Exception e)
-            {
-            }
+            catch (Exception e) {}
         }
         return null;
     }
@@ -108,6 +113,14 @@ public class TokenService
      */
     public String createToken(LoginUser loginUser)
     {
+        Collection<String> keys = redisCache.keys(CacheConstants.LOGIN_TOKEN_KEY + "*");
+        keys.forEach((String key) -> {
+            LoginUser user = redisCache.getCacheObject(key);
+            if (user.getUserId().equals(loginUser.getUserId())) {
+                redisCache.deleteObject(key);
+            }
+        });
+
         String token = IdUtils.fastUUID();
         loginUser.setToken(token);
         setUserAgent(loginUser);
@@ -115,6 +128,7 @@ public class TokenService
 
         Map<String, Object> claims = new HashMap<>();
         claims.put(Constants.LOGIN_USER_KEY, token);
+
         return createToken(claims);
     }
 

@@ -32,6 +32,8 @@
         <jwt.version>0.9.1</jwt.version>
         <mybatisplus.version>3.5.3.1</mybatisplus.version>
         <lombok.version>1.18.20</lombok.version>
+        <ip2region.version>2.7.0</ip2region.version>
+        <phone.geo.version>1.0.9-202302</phone.geo.version>
     </properties>
 	
     <!-- 依赖声明 -->
@@ -185,6 +187,19 @@
                 <version>${ruoyi.version}</version>
             </dependency>
 
+            <!-- ip2region xdb java 查询客户端实现https://github.com/lionsoul2014/ip2region/tree/master/binding/java -->
+<!--            <dependency>-->
+<!--                <groupId>org.lionsoul</groupId>-->
+<!--                <artifactId>ip2region</artifactId>-->
+<!--                <version>${ip2region.version}</version>-->
+<!--            </dependency>-->
+            <!-- 手机号码归属地 -->
+            <dependency>
+                <groupId>me.ihxq.projects</groupId>
+                <artifactId>phone-number-geo</artifactId>
+                <version>${phone.geo.version}</version>
+            </dependency>
+
         </dependencies>
     </dependencyManagement>
 
@@ -213,6 +228,14 @@
                     <source>${java.version}</source>
                     <target>${java.version}</target>
                     <encoding>${project.build.sourceEncoding}</encoding>
+                </configuration>
+            </plugin>
+            <plugin>
+                <artifactId>maven-resources-plugin</artifactId>
+                <configuration>
+                    <nonFilteredFileExtensions>
+                        <nonFilteredFileExtension>xdb</nonFilteredFileExtension>
+                    </nonFilteredFileExtensions>
                 </configuration>
             </plugin>
         </plugins>

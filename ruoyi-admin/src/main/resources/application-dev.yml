@@ -59,3 +59,8 @@ spring:
                 wall:
                     config:
                         multi-statement-allow: true
+
+sms:
+    host: https://www.tosms.cn/Api/SendSms.ashx
+    username: jxdmccc
+    Password: 2552A5365DD3E650BC6D8B7BA28CF589

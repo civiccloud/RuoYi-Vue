@@ -2,16 +2,29 @@ package com.ruoyi.web.controller.common;
 
 import java.util.ArrayList;
 import java.util.List;
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import com.alibaba.fastjson2.JSON;
+import com.alibaba.fastjson2.JSONException;
+import com.alibaba.fastjson2.JSONObject;
+import com.ruoyi.common.annotation.Log;
+import com.ruoyi.common.enums.BusinessType;
+import com.ruoyi.common.utils.ip.AddressUtils;
+import com.ruoyi.common.utils.ip.IpUtils;
+import com.ruoyi.system.domain.SysClue;
+import com.ruoyi.system.service.ISysClueService;
+import me.ihxq.projects.pna.PhoneNumberInfo;
+import me.ihxq.projects.pna.PhoneNumberLookup;
+import org.apache.commons.codec.binary.Base64;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.util.Base64Utils;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import com.ruoyi.common.config.RuoYiConfig;
 import com.ruoyi.common.constant.Constants;
@@ -37,6 +50,9 @@ public class CommonController
 
     private static final String FILE_DELIMETER = ",";
 
+    @Resource
+    private ISysClueService sysClueService;
+
     /**
      * 通用下载请求
      * 
@@ -44,8 +60,7 @@ public class CommonController
      * @param delete 是否删除
      */
     @GetMapping("/download")
-    public void fileDownload(String fileName, Boolean delete, HttpServletResponse response, HttpServletRequest request)
-    {
+    public void fileDownload(String fileName, Boolean delete, HttpServletResponse response, HttpServletRequest request) {
         try
         {
             if (!FileUtils.checkAllowDownload(fileName))
@@ -73,8 +88,7 @@ public class CommonController
      * 通用上传请求（单个）
      */
     @PostMapping("/upload")
-    public AjaxResult uploadFile(MultipartFile file) throws Exception
-    {
+    public AjaxResult uploadFile(MultipartFile file) throws Exception {
         try
         {
             // 上传文件路径
@@ -99,8 +113,7 @@ public class CommonController
      * 通用上传请求（多个）
      */
     @PostMapping("/uploads")
-    public AjaxResult uploadFiles(List<MultipartFile> files) throws Exception
-    {
+    public AjaxResult uploadFiles(List<MultipartFile> files) throws Exception {
         try
         {
             // 上传文件路径
@@ -136,9 +149,7 @@ public class CommonController
      * 本地资源通用下载
      */
     @GetMapping("/download/resource")
-    public void resourceDownload(String resource, HttpServletRequest request, HttpServletResponse response)
-            throws Exception
-    {
+    public void resourceDownload(String resource, HttpServletRequest request, HttpServletResponse response) throws Exception {
         try
         {
             if (!FileUtils.checkAllowDownload(resource))
@@ -159,5 +170,39 @@ public class CommonController
         {
             log.error("下载文件失败", e);
         }
+    }
+
+    /**
+     * 本地资源通用下载
+     */
+    @GetMapping("/clue/report")
+    public AjaxResult reportClueGet(@RequestParam String name, @RequestParam String mobile) {
+        SysClue sysClue = new SysClue();
+        sysClue.setName(name);
+        sysClue.setMobile(mobile);
+        return inputData(sysClue);
+    }
+
+    /**
+     * 接收线索专用的POST
+     */
+    @PostMapping("/clue/report")
+    public AjaxResult reportCluePost(@RequestBody String data) {
+        try{
+            byte[] decodeStr = Base64.decodeBase64(data.getBytes());
+            String sysClueStr = new String(decodeStr);
+            SysClue sysClue = JSON.to(SysClue.class, sysClueStr);
+            if (StringUtils.isEmpty(sysClue.getName()) || StringUtils.isEmpty(sysClue.getMobile())) {
+                return AjaxResult.error("请完善姓名或者手机号码");
+            }
+            return inputData(sysClue);
+        } catch (JSONException e) {
+            return AjaxResult.error("请求数据解密错误");
+        }
+    }
+
+    private AjaxResult inputData(SysClue sysClue){
+        int result = sysClueService.insertSysClue(sysClue);
+        return result > 0 ? AjaxResult.success() : AjaxResult.error();
     }
 }

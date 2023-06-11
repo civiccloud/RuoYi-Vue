@@ -7,8 +7,14 @@ package com.ruoyi.system.domain;
  */
 public class SysUserOnline
 {
+    /** 用户 */
+    private Long id;
+
     /** 会话编号 */
     private String tokenId;
+
+    /** 部门名称 */
+    private Long deptId;
 
     /** 部门名称 */
     private String deptName;
@@ -31,6 +37,14 @@ public class SysUserOnline
     /** 登录时间 */
     private Long loginTime;
 
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
     public String getTokenId()
     {
         return tokenId;
@@ -39,6 +53,14 @@ public class SysUserOnline
     public void setTokenId(String tokenId)
     {
         this.tokenId = tokenId;
+    }
+
+    public Long getDeptId() {
+        return deptId;
+    }
+
+    public void setDeptId(Long deptId) {
+        this.deptId = deptId;
     }
 
     public String getDeptName()

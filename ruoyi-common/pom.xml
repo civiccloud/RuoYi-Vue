@@ -135,6 +135,12 @@
             <artifactId>javax.servlet-api</artifactId>
         </dependency>
 
+        <!-- 手机号码归属地 -->
+        <dependency>
+            <groupId>me.ihxq.projects</groupId>
+            <artifactId>phone-number-geo</artifactId>
+        </dependency>
+
     </dependencies>
 
 </project>

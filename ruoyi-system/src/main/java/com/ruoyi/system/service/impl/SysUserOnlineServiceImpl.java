@@ -1,10 +1,18 @@
 package com.ruoyi.system.service.impl;
 
+import com.ruoyi.common.constant.CacheConstants;
+import com.ruoyi.common.core.redis.RedisCache;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.ruoyi.common.core.domain.model.LoginUser;
 import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.system.domain.SysUserOnline;
 import com.ruoyi.system.service.ISysUserOnlineService;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * 在线用户 服务层处理
@@ -14,6 +22,25 @@ import com.ruoyi.system.service.ISysUserOnlineService;
 @Service
 public class SysUserOnlineServiceImpl implements ISysUserOnlineService
 {
+    @Autowired
+    private RedisCache redisCache;
+
+    @Override
+    public List<SysUserOnline> selectOnlineList(){
+        Collection<String> keys = redisCache.keys(CacheConstants.LOGIN_TOKEN_KEY + "*");
+        List<SysUserOnline> userOnlineList = new ArrayList<SysUserOnline>();
+        for (String key : keys) {
+            LoginUser user = redisCache.getCacheObject(key);
+            // 排序admin在线的情况
+            if (user.getUserId() != 1) {
+                userOnlineList.add(this.loginUserToUserOnline(user));
+            }
+        }
+        Collections.reverse(userOnlineList);
+        userOnlineList.removeAll(Collections.singleton(null));
+        return userOnlineList;
+    }
+
     /**
      * 通过登录地址查询信息
      * 
@@ -80,6 +107,7 @@ public class SysUserOnlineServiceImpl implements ISysUserOnlineService
             return null;
         }
         SysUserOnline sysUserOnline = new SysUserOnline();
+        sysUserOnline.setId(user.getUserId());
         sysUserOnline.setTokenId(user.getToken());
         sysUserOnline.setUserName(user.getUsername());
         sysUserOnline.setIpaddr(user.getIpaddr());
@@ -89,6 +117,7 @@ public class SysUserOnlineServiceImpl implements ISysUserOnlineService
         sysUserOnline.setLoginTime(user.getLoginTime());
         if (StringUtils.isNotNull(user.getUser().getDept()))
         {
+            sysUserOnline.setDeptId(user.getUser().getDept().getDeptId());
             sysUserOnline.setDeptName(user.getUser().getDept().getDeptName());
         }
         return sysUserOnline;
