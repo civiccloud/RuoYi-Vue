@@ -86,7 +86,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 				AND sc.create_by like concat('%', #{createBy}, '%')
 			</if>
 		</where>
-		order by id desc
 		<!-- 数据范围过滤 -->
 		${params.dataScope}
 	</select>
