@@ -2,6 +2,8 @@ package com.ruoyi.web.controller.common;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -195,14 +197,29 @@ public class CommonController
             if (StringUtils.isEmpty(sysClue.getName()) || StringUtils.isEmpty(sysClue.getMobile())) {
                 return AjaxResult.error("请完善姓名或者手机号码");
             }
+            if (!isMobile(sysClue.getMobile())) {
+                return AjaxResult.error("您输入的手机号码有误，请更换后重试");
+            }
             return inputData(sysClue);
         } catch (JSONException e) {
             return AjaxResult.error("请求数据解密错误");
         }
     }
 
+    public static boolean isMobile(String mobile) {
+        String regex = "^((13[0-9])|(14[5,7,9])|(15([0-3]|[5-9]))|(166)|(17[0,1,3,5,6,7,8])|(18[0-9])|(19[2|8|9]))\\d{8}$";
+        if (mobile.length() != 11) {
+            return false;
+        } else {
+            Pattern p = Pattern.compile(regex);
+            Matcher m = p.matcher(mobile);
+            boolean isMatch = m.matches();
+            return isMatch;
+        }
+    }
+
     private AjaxResult inputData(SysClue sysClue){
         int result = sysClueService.insertSysClue(sysClue);
-        return result > 0 ? AjaxResult.success() : AjaxResult.error();
+        return result > 0 ? AjaxResult.success("获取资料成功，我们就在第一时间联系您") : AjaxResult.error("您已获取过资料无法再次获取");
     }
 }
